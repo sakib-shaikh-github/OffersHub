@@ -12,6 +12,7 @@ import 'package:offers_hub/features/share_reward/domain/reward_model.dart';
 import 'package:offers_hub/features/share_reward/presentation/bloc/reward_bloc.dart';
 import 'package:offers_hub/features/share_reward/presentation/bloc/reward_state.dart';
 import 'package:offers_hub/utilis/constants.dart';
+import 'package:offers_hub/utilis/search_delegate.dart';
 import 'package:offers_hub/utilis/snackbar.dart';
 import 'package:offers_hub/utilis/text_resizer.dart';
 
@@ -120,7 +121,7 @@ class RewardsCard extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('save Rs.${rewardModel.amount}',
+                                        Text("save \$${rewardModel.amount}",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleSmall!
@@ -227,18 +228,25 @@ class _RewardsSearchBarState extends State<RewardsSearchBar> {
       padding: const EdgeInsets.all(12.0),
       child: Stack(
         children: [
-          TextFormField(
-            controller: searchBarTextEditingController,
-            onFieldSubmitted: (value) {
-              showToast(
-                  'Only few search options is available to enable search.');
+          GestureDetector(
+            onTap: () {
+              final List<String> listSearchRewards = [];
+              for (var reward in listOfRewards) {
+                final brandname = RewardModel.fromApi(reward).brand;
+                listSearchRewards.add(brandname);
+              }
+
+              CustomSearchDelegate(data: listSearchRewards);
             },
-            focusNode: _searchBarFocusNode,
-            decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(5),
-                prefixIcon: Icon(Icons.search_rounded),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20))),
+            child: TextFormField(
+              controller: searchBarTextEditingController,
+              focusNode: _searchBarFocusNode,
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(5),
+                  prefixIcon: Icon(Icons.search_rounded),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
           ),
           ValueListenableBuilder(
             valueListenable: isTFActive,
